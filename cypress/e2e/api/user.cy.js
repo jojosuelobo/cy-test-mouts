@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker';
 describe('Users Endpoints', () => {
     let url_api
     let invalid_id = '0uxuPY0cbmQhpEz2'
-    const password = 'Pass123@'
 
     before(() => {
         cy.fixture('data.json').then((data) => {
@@ -44,7 +43,8 @@ describe('Users Endpoints', () => {
     it('get user by id', () => {
         const email = faker.internet.email()
         const nome = faker.person.fullName()
-        cy.createUser_api(url_api, { email: email, nome: nome }).then((response) => {
+        const password = faker.internet.password()
+        cy.createUser_api(url_api, { email: email, nome: nome, password: password }).then((response) => {
             const id = response.body._id
             cy.request({
                 method: 'GET',

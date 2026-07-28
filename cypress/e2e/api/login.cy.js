@@ -11,7 +11,7 @@ describe('Login', () => {
 
     it('should login with valid credentials', () => {
         const email = faker.internet.email()
-        const password = 'Pass123@'
+        const password = faker.internet.password()
 
         cy.createUser_api(url_api, { email: email, password: password }).then(() => {
             cy.request({
@@ -31,7 +31,7 @@ describe('Login', () => {
 
     it('not login with invalid credentials', () => {
         const email = faker.internet.email()
-        const password = 'Pass123@'
+        const password = faker.internet.password()
         
         cy.request({
             failOnStatusCode: false,

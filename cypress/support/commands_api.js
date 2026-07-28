@@ -8,7 +8,7 @@ Cypress.Commands.add('createUser_api', (url, userData = {}) => {
         body: {
             nome: userData.nome || faker.person.fullName(),
             email: userData.email || faker.internet.email(),
-            password: userData.password || 'Pass123@',
+            password: userData.password || faker.internet.password(),
             administrador: userData.administrador || 'true'
         }
     })
@@ -22,7 +22,7 @@ Cypress.Commands.add('updateUser_api', (url, userData = {}, id) => {
         body: {
             nome: userData.nome || faker.person.fullName(),
             email: userData.email || faker.internet.email(),
-            password: userData.password || password,
+            password: userData.password || faker.internet.password(),
             administrador: userData.administrador || 'true'
         }
     })
