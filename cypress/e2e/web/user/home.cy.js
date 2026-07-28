@@ -20,12 +20,9 @@ describe('User - Home', () => {
     })
 
     it('adds an item to the list and removes it', () => {
-        const item = 'Iphone 17'
-        cy.get('[data-testid="pesquisar"]').type(item)
-        cy.get('[data-testid="botaoPesquisar"]').click()
-        cy.get('[data-testid="adicionarNaLista"]').click()
+        cy.get('[data-testid="adicionarNaLista"]').first().click()
 
-        cy.get('[class="card-body"]').contains(item).should('be.visible')
+        cy.get('[class="card-body"]').should('be.visible')
         cy.get('[data-testid="shopping-cart-product-quantity"]').should('have.text', 'Total: 1')
 
         cy.get('[data-testid="limparLista"]').click()

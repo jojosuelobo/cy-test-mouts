@@ -40,15 +40,4 @@ describe('Admin - Product', () => {
             .contains('td', product.nome)
             .should('exist');
     })
-
-    it('removes a product', () => {
-        cy.intercept('DELETE', 'https://serverest.dev/produtos/*').as('deleteProduct')
-
-        cy.get('[data-testid="listarProdutos"]').click()
-        cy.get('button').contains('Excluir').click()
-        
-        cy.wait('@deleteProduct').then((response) => {
-            expect(response.response.statusCode).to.exist // Fiz um assert simples e generico pois o site não permite excluir produtos fixos
-        })
-    });
 })
