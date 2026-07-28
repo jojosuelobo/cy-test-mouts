@@ -1,0 +1,14 @@
+{
+  "name": "cy-test-mouts",
+  "version": "1.0.0",
+  "description": "cypress test for Mouts ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jojosuelobo",
+  "license": "ISC",
+  "dependencies": {
+    "cypress": "^15.19.0"
+  }
+}
