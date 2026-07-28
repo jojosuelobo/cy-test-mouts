@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 describe('Users Endpoints', () => {
     let url_api
     let password
+    let invalid_id = '0uxuPY0cbmQhpEz2'
 
     before(() => {
         cy.fixture('data.json').then((data) => {
@@ -11,16 +12,7 @@ describe('Users Endpoints', () => {
     })
 
     it('create user', () => {
-        cy.request({
-            method: 'POST',
-            url: `${url_api}/usuarios`,
-            body: {
-                nome: faker.person.fullName(),
-                email: faker.internet.email(),
-                password: password,
-                administrador: 'true'
-            }
-        }).then((response) => {
+        cy.createUser_api(url_api).then((response) => {
             expect(response.status).to.eq(201)
             expect(response.body.message).to.eq('Cadastro realizado com sucesso')
             expect(response.body._id).to.be.not.null
@@ -30,27 +22,8 @@ describe('Users Endpoints', () => {
     it('create already registered user', () => {
         const email = faker.internet.email()
 
-        cy.request({
-            method: 'POST',
-            url: `${url_api}/usuarios`,
-            body: {
-                nome: faker.person.fullName(),
-                email: email,
-                password: password,
-                administrador: 'true'
-            }
-        }).then(() => {
-            cy.request({
-                failOnStatusCode: false,
-                method: 'POST',
-                url: `${url_api}/usuarios`,
-                body: {
-                    nome: faker.person.fullName(),
-                    email: email,
-                    password: password,
-                    administrador: 'true'
-                }
-            }).then((response) => {
+        cy.createUser_api(url_api, { email: email }).then(() => {
+            cy.createUser_api(url_api, { email: email }).then((response) => {
                 expect(response.status).to.eq(400)
                 expect(response.body.message).to.eq('Este email já está sendo usado')
             })
@@ -72,16 +45,7 @@ describe('Users Endpoints', () => {
     it('get user by id', () => {
         const email = faker.internet.email()
         const nome = faker.person.fullName()
-        cy.request({
-            method: 'POST',
-            url: `${url_api}/usuarios`,
-            body: {
-                nome: nome,
-                email: email,
-                password: password,
-                administrador: 'true'
-            }
-        }).then((response) => {
+        cy.createUser_api(url_api, { email: email, nome: nome }).then((response) => {
             const id = response.body._id
             cy.request({
                 method: 'GET',
@@ -100,7 +64,7 @@ describe('Users Endpoints', () => {
         cy.request({
             failOnStatusCode: false,
             method: 'GET',
-            url: `${url_api}/usuarios/0uxuPY0cbmQhpEz2`
+            url: `${url_api}/usuarios/${invalid_id}`
         }).then((response) => {
             expect(response.status).to.eq(400)
             expect(response.body.message).to.eq('Usuário não encontrado')
@@ -122,27 +86,9 @@ describe('Users Endpoints', () => {
         const emailUpdate = faker.internet.email()
         const nomeUpdate = faker.person.fullName()
         const passwordUpdate = faker.internet.password()
-        cy.request({
-            method: 'POST',
-            url: `${url_api}/usuarios`,
-            body: {
-                nome: faker.person.fullName(),
-                email: faker.internet.email(),
-                password: password,
-                administrador: 'true'
-            }
-        }).then((response) => {
+        cy.createUser_api(url_api).then((response) => {
             const id = response.body._id
-            cy.request({
-                method: 'PUT',
-                url: `${url_api}/usuarios/${id}`,
-                body: {
-                    nome: nomeUpdate,
-                    email: emailUpdate,
-                    password: passwordUpdate,
-                    administrador: 'false'
-                }
-            }).then((response) => {
+            cy.updateUser_api(url_api, { email: emailUpdate, nome: nomeUpdate, password: passwordUpdate, administrador: 'false' }, id).then((response) => {
                 expect(response.status).to.eq(200)
                 expect(response.body.message).to.eq('Registro alterado com sucesso')
             }).then(() => {
@@ -173,17 +119,16 @@ describe('Users Endpoints', () => {
         })
     })
 
+    it('update non-existent user with all fields', () => {
+        cy.updateUser_api(url_api, { nome: faker.person.fullName(), email: faker.internet.email(), password: faker.internet.password(), administrador: 'true' }, invalid_id).then((response) => {
+            expect(response.status).to.eq(201)
+            expect(response.body.message).to.eq('Cadastro realizado com sucesso')
+            expect(response.body._id).to.be.not.null
+        })
+    })
+
     it('delete user', () => {
-        cy.request({
-            method: 'POST',
-            url: `${url_api}/usuarios`,
-            body: {
-                nome: faker.person.fullName(),
-                email: faker.internet.email(),
-                password: password,
-                administrador: 'true'
-            }
-        }).then((response) => {
+        cy.createUser_api(url_api).then((response) => {
             const id = response.body._id
             cy.request({
                 method: 'DELETE',
