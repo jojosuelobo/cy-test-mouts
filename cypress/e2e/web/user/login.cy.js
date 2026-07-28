@@ -9,7 +9,7 @@ describe('Login', () => {
         })
     })
 
-    it('should login with valid credentials', () => {
+    it('logs in with valid credentials', () => {
         const email = faker.internet.email()
         const nome = faker.person.fullName()
         const password = faker.internet.password()
@@ -21,7 +21,7 @@ describe('Login', () => {
         cy.get('h1').contains(`${nome}`).should('be.visible')
     })
 
-    it('not login with invalid credentials', () => {
+    it('does not log in with invalid credentials', () => {
         const email = faker.internet.email()
         const password = faker.internet.password()
 

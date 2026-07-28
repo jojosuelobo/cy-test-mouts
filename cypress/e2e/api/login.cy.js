@@ -29,7 +29,7 @@ describe('Login', () => {
         })
     })
 
-    it('not login with invalid credentials', () => {
+    it('should NOT login with invalid credentials', () => {
         const email = faker.internet.email()
         const password = faker.internet.password()
         

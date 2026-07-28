@@ -19,7 +19,7 @@ describe('User - Home', () => {
         cy.login(email, password)
     })
 
-    it('add item to list and remove it', () => {
+    it('adds an item to the list and removes it', () => {
         const item = 'Iphone 17'
         cy.get('[data-testid="pesquisar"]').type(item)
         cy.get('[data-testid="botaoPesquisar"]').click()

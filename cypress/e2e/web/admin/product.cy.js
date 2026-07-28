@@ -20,7 +20,7 @@ describe('Admin - Product', () => {
         cy.login(email, password)
     })
 
-    it('create a new product', () => {
+    it('creates a new product', () => {
         const product = {
             nome: faker.commerce.productName(),
             preco: faker.number.int({ min: 1, max: 100 }),
@@ -41,7 +41,7 @@ describe('Admin - Product', () => {
             .should('exist');
     })
 
-    it('remove a product', () => {
+    it('removes a product', () => {
         cy.intercept('DELETE', 'https://serverest.dev/produtos/*').as('deleteProduct')
 
         cy.get('[data-testid="listarProdutos"]').click()

@@ -9,7 +9,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('create user', () => {
+    it('creates a new user', () => {
         cy.createUser_api(url_api).then((response) => {
             expect(response.status).to.eq(201)
             expect(response.body.message).to.eq('Cadastro realizado com sucesso')
@@ -17,7 +17,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('create already registered user', () => {
+    it('creates a new user with an already registered email', () => {
         const email = faker.internet.email()
 
         cy.createUser_api(url_api, { email: email }).then(() => {
@@ -28,7 +28,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('get users', () => {
+    it('gets all users', () => {
         cy.request({
             method: 'GET',
             url: `${url_api}/usuarios`
@@ -40,7 +40,7 @@ describe('Users Endpoints', () => {
         })
     });
 
-    it('get user by id', () => {
+    it('gets an user by id', () => {
         const email = faker.internet.email()
         const nome = faker.person.fullName()
         const password = faker.internet.password()
@@ -59,7 +59,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('get user by invalid id', () => {
+    it('gets an user by an non existent id', () => {
         cy.request({
             failOnStatusCode: false,
             method: 'GET',
@@ -70,7 +70,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('get user with invalid id', () => {
+    it('gets an user by an invalid id', () => {
         cy.request({
             failOnStatusCode: false,
             method: 'GET',
@@ -81,7 +81,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('update user', () => {
+    it('updates an user', () => {
         const emailUpdate = faker.internet.email()
         const nomeUpdate = faker.person.fullName()
         const passwordUpdate = faker.internet.password()
@@ -105,7 +105,7 @@ describe('Users Endpoints', () => {
         })
     });
 
-    it('update non-existent user', () => {
+    it('updates a non-existent user', () => {
         cy.request({
             failOnStatusCode: false,
             method: 'PUT',
@@ -118,7 +118,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('update non-existent user with all fields', () => {
+    it('updates a non-existent user with all fields', () => {
         cy.updateUser_api(url_api, { nome: faker.person.fullName(), email: faker.internet.email(), password: faker.internet.password(), administrador: 'true' }, invalid_id).then((response) => {
             expect(response.status).to.eq(201)
             expect(response.body.message).to.eq('Cadastro realizado com sucesso')
@@ -126,7 +126,7 @@ describe('Users Endpoints', () => {
         })
     })
 
-    it('delete user', () => {
+    it('deletes an user', () => {
         cy.createUser_api(url_api).then((response) => {
             const id = response.body._id
             cy.request({
@@ -139,7 +139,7 @@ describe('Users Endpoints', () => {
         })
     });
 
-    it('delete non-existent user', () => {
+    it('deletes a non-existent user', () => {
         cy.request({
             failOnStatusCode: false,
             method: 'DELETE',
