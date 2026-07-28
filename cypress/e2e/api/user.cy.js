@@ -1,13 +1,12 @@
 import { faker } from '@faker-js/faker';
 describe('Users Endpoints', () => {
     let url_api
-    let password
     let invalid_id = '0uxuPY0cbmQhpEz2'
+    const password = 'Pass123@'
 
     before(() => {
         cy.fixture('data.json').then((data) => {
             url_api = data.url_api
-            password = data.password
         })
     })
 

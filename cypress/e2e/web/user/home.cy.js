@@ -3,23 +3,20 @@ import { faker } from '@faker-js/faker';
 describe('User - Home', () => {
     let url_api
     let password
-    let url_web
 
     before(() => {
         cy.fixture('data.json').then((data) => {
             url_api = data.url_api
-            url_web = data.url_web
             password = data.password
         })
     })
 
     beforeEach(() => {
-        cy.visit(url_web)
         const email = faker.internet.email()
         const nome = faker.person.fullName()
         cy.createUser_api(url_api, { email: email, password: password, nome: nome, administrador: 'false' })
 
-        cy.visit(url_web)
+        cy.visit('/')
         cy.login(email, password)
     })
 

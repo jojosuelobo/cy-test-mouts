@@ -4,23 +4,20 @@ import 'cypress-file-upload'
 describe('Admin - Product', () => {
     let url_api
     let password
-    let url_web
 
     before(() => {
         cy.fixture('data.json').then((data) => {
             url_api = data.url_api
-            url_web = data.url_web
             password = data.password
         })
     })
 
     beforeEach(() => {
-        cy.visit(url_web)
         const email = faker.internet.email()
         const nome = faker.person.fullName()
         cy.createUser_api(url_api, { email: email, password: password, nome: nome })
 
-        cy.visit(url_web)
+        cy.visit('/')
         cy.login(email, password)
     })
 
@@ -43,7 +40,6 @@ describe('Admin - Product', () => {
         cy.get('table.table-striped')
             .contains('td', product.nome)
             .should('exist');
-
     })
 
     it('remove a product', () => {
@@ -53,7 +49,7 @@ describe('Admin - Product', () => {
         cy.get('button').contains('Excluir').click()
         
         cy.wait('@deleteProduct').then((response) => {
-            expect(response.response.statusCode).to.exist
+            expect(response.response.statusCode).to.exist // Fiz um assert simples e generico pois o site não permite excluir produtos fixos
         })
     });
 })

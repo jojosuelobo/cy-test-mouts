@@ -1,6 +1,4 @@
-
 import { faker } from '@faker-js/faker'
-let password = 'Pass123@'
 
 Cypress.Commands.add('createUser_api', (url, userData = {}) => {
     cy.request({
@@ -10,7 +8,7 @@ Cypress.Commands.add('createUser_api', (url, userData = {}) => {
         body: {
             nome: userData.nome || faker.person.fullName(),
             email: userData.email || faker.internet.email(),
-            password: userData.password || password,
+            password: userData.password || 'Pass123@',
             administrador: userData.administrador || 'true'
         }
     })
