@@ -19,9 +19,7 @@ describe('Login', () => {
         cy.createUser_api(url_api, { email: email, password: password, nome: nome })
 
         cy.visit(url_web)
-        cy.get('[data-testid="email"]').type(email)
-        cy.get('[data-testid="senha"]').type(password)
-        cy.get('[data-testid="entrar"]').click()
+        cy.login(email, password)
 
         cy.get('h1').contains(`${nome}`).should('be.visible')
     })
@@ -30,9 +28,7 @@ describe('Login', () => {
         const email = faker.internet.email()
 
         cy.visit(url_web)
-        cy.get('[data-testid="email"]').type(email)
-        cy.get('[data-testid="senha"]').type(password)
-        cy.get('[data-testid="entrar"]').click()
+        cy.login(email, password)
 
         cy.contains('Email e/ou senha inválidos').should('be.visible')
     })

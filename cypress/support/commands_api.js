@@ -11,7 +11,7 @@ Cypress.Commands.add('createUser_api', (url, userData = {}) => {
             nome: userData.nome || faker.person.fullName(),
             email: userData.email || faker.internet.email(),
             password: userData.password || password,
-            administrador: userData.administrador || 'true'
+            administrador: userData.administrador || 'false'
         }
     })
 })
