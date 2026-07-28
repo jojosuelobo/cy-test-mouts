@@ -1,0 +1,208 @@
+import { faker } from '@faker-js/faker';
+describe('Users Endpoints', () => {
+    let url_api
+    let password
+
+    before(() => {
+        cy.fixture('data.json').then((data) => {
+            url_api = data.url_api
+            password = data.password
+        })
+    })
+
+    it('create user', () => {
+        cy.request({
+            method: 'POST',
+            url: `${url_api}/usuarios`,
+            body: {
+                nome: faker.person.fullName(),
+                email: faker.internet.email(),
+                password: password,
+                administrador: 'true'
+            }
+        }).then((response) => {
+            expect(response.status).to.eq(201)
+            expect(response.body.message).to.eq('Cadastro realizado com sucesso')
+            expect(response.body._id).to.be.not.null
+        })
+    })
+
+    it('create already registered user', () => {
+        const email = faker.internet.email()
+
+        cy.request({
+            method: 'POST',
+            url: `${url_api}/usuarios`,
+            body: {
+                nome: faker.person.fullName(),
+                email: email,
+                password: password,
+                administrador: 'true'
+            }
+        }).then(() => {
+            cy.request({
+                failOnStatusCode: false,
+                method: 'POST',
+                url: `${url_api}/usuarios`,
+                body: {
+                    nome: faker.person.fullName(),
+                    email: email,
+                    password: password,
+                    administrador: 'true'
+                }
+            }).then((response) => {
+                expect(response.status).to.eq(400)
+                expect(response.body.message).to.eq('Este email já está sendo usado')
+            })
+        })
+    })
+
+    it('get users', () => {
+        cy.request({
+            method: 'GET',
+            url: `${url_api}/usuarios`
+        }).then((response) => {
+            expect(response.status).to.eq(200)
+            expect(response.body.quantidade).to.be.greaterThan(0)
+            expect(response.body.usuarios.length).to.be.greaterThan(0)
+            expect(response.body.quantidade).to.be.eq(response.body.usuarios.length)
+        })
+    });
+
+    it('get user by id', () => {
+        const email = faker.internet.email()
+        const nome = faker.person.fullName()
+        cy.request({
+            method: 'POST',
+            url: `${url_api}/usuarios`,
+            body: {
+                nome: nome,
+                email: email,
+                password: password,
+                administrador: 'true'
+            }
+        }).then((response) => {
+            const id = response.body._id
+            cy.request({
+                method: 'GET',
+                url: `${url_api}/usuarios/${id}`
+            }).then((response) => {
+                expect(response.status).to.eq(200)
+                expect(response.body.nome).to.be.eq(nome)
+                expect(response.body.email).to.be.eq(email)
+                expect(response.body.password).to.be.eq(password)
+                expect(response.body.administrador).to.be.eq('true')
+            })
+        })
+    })
+
+    it('get user by invalid id', () => {
+        cy.request({
+            failOnStatusCode: false,
+            method: 'GET',
+            url: `${url_api}/usuarios/0uxuPY0cbmQhpEz2`
+        }).then((response) => {
+            expect(response.status).to.eq(400)
+            expect(response.body.message).to.eq('Usuário não encontrado')
+        })
+    })
+
+    it('get user with invalid id', () => {
+        cy.request({
+            failOnStatusCode: false,
+            method: 'GET',
+            url: `${url_api}/usuarios/invalido`
+        }).then((response) => {
+            expect(response.status).to.eq(400)
+            expect(response.body.id).to.eq('id deve ter exatamente 16 caracteres alfanuméricos')
+        })
+    })
+
+    it('update user', () => {
+        const emailUpdate = faker.internet.email()
+        const nomeUpdate = faker.person.fullName()
+        const passwordUpdate = faker.internet.password()
+        cy.request({
+            method: 'POST',
+            url: `${url_api}/usuarios`,
+            body: {
+                nome: faker.person.fullName(),
+                email: faker.internet.email(),
+                password: password,
+                administrador: 'true'
+            }
+        }).then((response) => {
+            const id = response.body._id
+            cy.request({
+                method: 'PUT',
+                url: `${url_api}/usuarios/${id}`,
+                body: {
+                    nome: nomeUpdate,
+                    email: emailUpdate,
+                    password: passwordUpdate,
+                    administrador: 'false'
+                }
+            }).then((response) => {
+                expect(response.status).to.eq(200)
+                expect(response.body.message).to.eq('Registro alterado com sucesso')
+            }).then(() => {
+                cy.request({
+                    method: 'GET',
+                    url: `${url_api}/usuarios/${id}`
+                }).then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body.nome).to.eq(nomeUpdate)
+                    expect(response.body.email).to.eq(emailUpdate)
+                    expect(response.body.password).to.eq(passwordUpdate)
+                    expect(response.body.administrador).to.eq('false')
+                })
+            })
+        })
+    });
+
+    it('update non-existent user', () => {
+        cy.request({
+            failOnStatusCode: false,
+            method: 'PUT',
+            url: `${url_api}/usuarios/invalido`, // Eu reportaria um bug sobre isso! PUT não tem a validação de 16 caracteres alfanuméricos
+            body: {
+                nome: faker.person.fullName(),
+            }
+        }).then((response) => {
+            expect(response.status).to.eq(400)
+        })
+    })
+
+    it('delete user', () => {
+        cy.request({
+            method: 'POST',
+            url: `${url_api}/usuarios`,
+            body: {
+                nome: faker.person.fullName(),
+                email: faker.internet.email(),
+                password: password,
+                administrador: 'true'
+            }
+        }).then((response) => {
+            const id = response.body._id
+            cy.request({
+                method: 'DELETE',
+                url: `${url_api}/usuarios/${id}`
+            }).then((response) => {
+                expect(response.status).to.eq(200)
+                expect(response.body.message).to.eq('Registro excluído com sucesso')
+            })
+        })
+    });
+
+    it('delete non-existent user', () => {
+        cy.request({
+            failOnStatusCode: false,
+            method: 'DELETE',
+            url: `${url_api}/usuarios/invalido`
+        }).then((response) => {
+            expect(response.status).to.eq(200)
+            expect(response.body.message).to.eq('Nenhum registro excluído')
+        })
+    })
+})
